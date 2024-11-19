@@ -1,0 +1,30 @@
+.form-header {
+  margin-top: 0.7rem;
+}
+
+.form-header-title {
+  font-size: 1.6rem;
+  line-height: 2rem;
+}
+
+.form-header-steps {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.form-step-item {
+  padding: 0.5rem;
+  text-align: center;
+  width: 1rem;
+  height: 1.5rem;
+  border-radius: 100%;
+  color: var(--text-light);
+}
+
+.active-step {
+  background-color: #3434da;
+}
+
+.inactive-step {
+  background-color: #a4a3a3;
+}
