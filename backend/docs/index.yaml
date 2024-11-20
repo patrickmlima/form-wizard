@@ -1,0 +1,66 @@
+openapi: 3.0.0
+info:
+  title: Form Storage
+  version: 1.0.0
+paths:
+  /health-check:
+    get:
+      summary: Check the health of the system
+      tags:
+        - Health
+      responses:
+        '204':
+          description: Healthy
+  /api/forms:
+    post:
+      summary: Requests server to store data for a form
+      tags:
+        - Generic Form
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Successfully stored form data
+        '400':
+          description: Error on provided data
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal error creating translation request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    get:
+      summary: Get a list of the stored forms data
+      tags:
+        - Generic Form
+      responses:
+        '200':
+          description: List of stored data
+        '400':
+          description: Error on provided data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal error creating translation request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  schemas:
+    ErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
