@@ -1,6 +1,12 @@
 .form-card {
-  width: 100%;
-  max-width: 44rem;
+  min-width: 25rem;
   margin: auto;
   padding: 1rem;
+}
+
+.form-card * select,
+.form-card * input {
+  margin: 0.5rem 0;
+  padding: 0.3rem;
+  width: 100%;
 }

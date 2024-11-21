@@ -10,15 +10,15 @@
 .form-header-steps {
   display: flex;
   gap: 0.5rem;
+  justify-content: center;
 }
 
 .form-step-item {
-  padding: 0.5rem;
+  padding: 0.5rem 1rem;
   text-align: center;
-  width: 1rem;
-  height: 1.5rem;
   border-radius: 100%;
   color: var(--text-light);
+  cursor: pointer;
 }
 
 .active-step {

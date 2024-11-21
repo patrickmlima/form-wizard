@@ -7,9 +7,15 @@ export type FormHeaderProps = {
   steps: FormStep[];
   currentStep: FormStep;
   currentStepIndex: number;
+  setCurrentStepIndex?: (index: number) => void;
 };
 
-const FormHeader: React.FC<FormHeaderProps> = ({ steps, currentStep, currentStepIndex }) => {
+const FormHeader: React.FC<FormHeaderProps> = ({
+  steps,
+  currentStep,
+  currentStepIndex,
+  setCurrentStepIndex,
+}) => {
   return (
     <section className="form-header">
       <h2 className="form-header-title">{currentStep.title}</h2>
@@ -20,7 +26,10 @@ const FormHeader: React.FC<FormHeaderProps> = ({ steps, currentStep, currentStep
             className={`form-step-item ${
               index <= currentStepIndex ? 'active-step' : 'inactive-step'
             }`}
-          >{index + 1}</div>
+            onClick={() => setCurrentStepIndex && setCurrentStepIndex(index)}
+          >
+            {index + 1}
+          </div>
         ))}
       </div>
     </section>
