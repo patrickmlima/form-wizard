@@ -1,68 +1,101 @@
-import React, { useState } from 'react';
+import React, { useCallback } from 'react';
 
-import { FormWizardProps } from '../core/types';
+import { FormWizardProps, StepData } from '../core/types';
 import FormHeader from './FormHeader/FormHeader';
 import FormCard from './FormCard/FormCard';
 import FormFooter from './FormFooter/FormFooter';
 import { useFormStore } from '../hooks/formStore';
-import { SlightFormWizardError } from '../core/interfaces';
 import './SlightFormWizard.css';
+import { SlightFormWizardError } from '../core/interfaces';
 
 const SlightFormWizard: React.FC<FormWizardProps> = ({
   steps,
   onComplete,
-  initialData = {},
+  initialData = [],
   storeKey = 'slight-form-wizard',
 }) => {
   const {
     data: formData,
-    setData: setFormData,
     currentStepIndex,
     setCurrentStepIndex,
-  } = useFormStore(storeKey, initialData);
-
-  const [errors, setErrors] = useState<Record<string, string>>({});
+    updateStepData,
+    clearPersistedData,
+  } = useFormStore(storeKey, initialData, steps);
 
   const currentStep = steps[currentStepIndex];
   const StepComponent = currentStep?.component;
 
-  const handleDataChange = (newData: Record<string, any>) => {
-    setFormData(prev => ({ ...prev, ...newData }));
-    setErrors({});
-  };
+  const validateCurrentStep = useCallback(async () => {
+    const currentStep = steps[currentStepIndex];
+    const currentStepData = formData[currentStepIndex];
 
-  const handleNext = async () => {
     if (currentStep.validationSchema) {
       try {
-        await currentStep.validationSchema(formData);
-        setErrors({});
+        await currentStep.validationSchema(
+          currentStepData,
+          formData,
+        );
+        
+        updateStepData(currentStepIndex, { 
+          isComplete: true, 
+          errors: {} 
+        });
+
+        return true;
       } catch (error: any) {
+        let errors: Record<string, string> = { general: error.message };
         if (error instanceof SlightFormWizardError) {
-          const mapped = (error as SlightFormWizardError).errors.reduce(
-            (res, item) => ({
-              ...res,
-              [item.field]: item.message,
-            }),
-            {}
-          );
-          setErrors(mapped);
-          return;
+          errors = error.errors.reduce((obj, err) => ({ ...obj, [err.field]: err.message }));
         }
-        setErrors({ general: error.message });
-        return;
+        updateStepData(currentStepIndex, { 
+          isComplete: false, 
+          errors: {}
+        });
+        return false;
       }
     }
+    return true;
+  }, [steps, currentStepIndex, formData, updateStepData]);
 
-    if (currentStepIndex === steps.length - 1) {
-      onComplete(formData);
-    } else {
-      setCurrentStepIndex(prev => prev + 1);
+  const onUpdateStepData = (newData: StepData['data']) => {
+    const currentStepData = formData[currentStepIndex];
+    const updated: StepData = {
+      ...currentStepData,
+      data: {
+        ...currentStepData.data,
+        ...newData,
+      },
+      errors: {},
     }
+    updateStepData(currentStepIndex, updated)
   };
 
-  const handleBack = () => {
-    setCurrentStepIndex(prev => prev - 1);
-  };
+  const handleNext = useCallback(async () => {
+    const isValid = await validateCurrentStep();
+    console.log('is valid ', isValid)
+    
+    if (isValid) {
+      if (currentStepIndex < steps.length - 1) {
+        setCurrentStepIndex(prev => prev + 1);
+      } else {
+        // Final submission
+        onComplete(formData);
+        clearPersistedData();
+      }
+    }
+  }, [
+    validateCurrentStep, 
+    currentStepIndex, 
+    steps.length, 
+    onComplete, 
+    clearPersistedData
+  ]);
+
+  const handleBack = useCallback(() => {
+    if (currentStepIndex > 0) {
+      setCurrentStepIndex(prev => prev - 1);
+    }
+  }, [currentStepIndex]);
 
   const handleSetIndex = (index: number) => {
     if (index < currentStepIndex) {
@@ -81,24 +114,24 @@ const SlightFormWizard: React.FC<FormWizardProps> = ({
 
       {StepComponent && (
         <section>
-          {Object.keys(errors).length > 0 && (
+          {Object.keys(formData[currentStepIndex]?.errors ?? {}).length > 0 && (
             <div className="alert-card">
               <ul className="alert-list">
-                {Object.entries(errors).map(([field, error]) => {
+                {Object.entries(formData[currentStepIndex]?.errors ?? {}).map(([field, error]) => {
                   return <li key={field}>{error}</li>;
                 })}
               </ul>
             </div>
           )}
           <StepComponent
-            data={formData}
+            stepData={formData[currentStepIndex]}
             allData={formData}
-            onDataChange={handleDataChange}
+            onUpdateStepData={onUpdateStepData}
             onStepSubmit={handleNext}
             onStepBack={handleBack}
+            onSetStep={handleSetIndex}
             isLastStep={currentStepIndex === steps.length - 1}
             isFirstStep={currentStepIndex === 0}
-            errors={errors}
           />
         </section>
       )}

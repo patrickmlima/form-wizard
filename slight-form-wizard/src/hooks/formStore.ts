@@ -1,21 +1,39 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { FormStep, StepData } from '../core/types';
 
-export const useFormStore = (key: string, initialData: Record<string, any>) => {
-  // Load initial data from localStorage
-  const loadPersistedData = (): Record<string, any> => {
+export const useFormStore = (key: string, initialData: StepData[], steps: FormStep[]) => {
+
+  const initializeStepsData = useCallback(() => {
+    const idsList = initialData?.length > 0 ? initialData?.map(item => item.id) : steps.map(step => step.id);
     try {
-      const saved = localStorage.getItem(key);
-      if (saved) {
-        return JSON.parse(saved);
+      const savedData = localStorage.getItem(key);
+      if (savedData) {
+        const storedData = JSON.parse(savedData) as StepData[];
+        
+        return idsList.map(id => {
+          const savedStepData = storedData.find((step) => step.id === id);
+          return savedStepData || {
+            id,
+            data: {},
+            isComplete: false,
+            errors: {}
+          };
+        });
       }
     } catch (error) {
       console.error('Error loading persisted form data:', error);
     }
-    return initialData;
-  };
 
-  const [data, setData] = useState(loadPersistedData);
-  const [currentStepIndex, setCurrentStepIndex] = useState(() => {
+    return idsList.map(id => ({
+      id,
+      data: {},
+      isComplete: false,
+      errors: {}
+    }));
+  }, [key, initialData, steps]);
+
+  const [data, setData] = useState<StepData[]>(initializeStepsData);
+  const [currentStepIndex, setCurrentStepIndex] = useState<number>(() => {
     try {
       const saved = localStorage.getItem(`${key}_step`);
       return saved ? parseInt(saved, 10) : 0;
@@ -34,11 +52,28 @@ export const useFormStore = (key: string, initialData: Record<string, any>) => {
     }
   }, [data, currentStepIndex, key]);
 
+  const updateStepData = useCallback((stepIndex: number, updates: Partial<StepData>) => {
+    setData(current => current.map((step, index) => 
+      index === stepIndex 
+        ? { ...step, ...updates } 
+        : step
+    ));
+  }, []);
+
   const clearPersistedData = () => {
     try {
       localStorage.removeItem(key);
       localStorage.removeItem(`${key}_step`);
-      setData(initialData);
+
+      const idsList = initialData?.length > 0 ? initialData?.map(item => item.id) : steps.map(step => step.id);
+
+      const initializedSteps = idsList.map(id => ({
+        id: id,
+        data: {},
+        isComplete: false,
+        errors: {}
+      }));
+      setData(initializedSteps);
       setCurrentStepIndex(0);
     } catch (error) {
       console.error('Error clearing persisted form data:', error);
@@ -50,6 +85,7 @@ export const useFormStore = (key: string, initialData: Record<string, any>) => {
     setData,
     currentStepIndex,
     setCurrentStepIndex,
+    updateStepData,
     clearPersistedData,
   };
 };

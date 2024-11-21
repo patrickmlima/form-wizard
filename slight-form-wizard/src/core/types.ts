@@ -1,26 +1,33 @@
 import React from 'react';
 
-export type FormStepProps = {
+export type StepData = {
+  id: string;
   data: Record<string, any>;
-  allData: Record<string, any>;
-  onDataChange: (newData: Record<string, any>) => void;
+  isComplete: boolean;
+  errors?: Record<string, string>;
+}
+
+export type FormStepProps = {
+  stepData: StepData;
+  allData: StepData[];
+  onUpdateStepData: (updates: StepData['data']) => void;
   onStepSubmit: () => void;
   onStepBack: () => void;
+  onSetStep: (index: number) => void;
   isLastStep: boolean;
   isFirstStep: boolean;
-  errors?: Record<string, any>;
 };
 
 export type FormStep = {
   id: string;
   title: string;
-  validationSchema?: (data: Record<string, any>) => Promise<unknown>;
+  validationSchema?: (stepData: StepData, allData?: StepData[]) => Promise<unknown>;
   component: React.ComponentType<FormStepProps>;
 };
 
 export type FormWizardProps = {
   steps: FormStep[];
   onComplete: (data: Record<string, any>) => void;
-  initialData?: Record<string, any>;
+  initialData?: StepData[];
   storeKey?: string;
 };
