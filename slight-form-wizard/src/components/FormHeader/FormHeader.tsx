@@ -8,6 +8,7 @@ export type FormHeaderProps = {
   currentStep: FormStep;
   currentStepIndex: number;
   setCurrentStepIndex?: (index: number) => void;
+  allowRevision?: boolean;
 };
 
 const FormHeader: React.FC<FormHeaderProps> = ({
@@ -15,10 +16,11 @@ const FormHeader: React.FC<FormHeaderProps> = ({
   currentStep,
   currentStepIndex,
   setCurrentStepIndex,
+  allowRevision,
 }) => {
   return (
     <section className="form-header">
-      <h2 className="form-header-title">{currentStep.title}</h2>
+      <h2 className="form-header-title">{currentStep?.title ?? (allowRevision && 'Review')}</h2>
       <div className="form-header-steps">
         {steps.map((step, index) => (
           <div

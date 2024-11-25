@@ -1,0 +1,18 @@
+.section-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.field-group {
+  padding: 1rem 0;
+}
+
+.field-name {
+  font-weight: bold;
+  margin: 0;
+}
+
+.field-value {
+  margin: 0;
+}

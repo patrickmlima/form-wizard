@@ -5,7 +5,7 @@ export type StepData = {
   data: Record<string, any>;
   isComplete: boolean;
   errors?: Record<string, string>;
-}
+};
 
 export type FormStepProps = {
   stepData: StepData;
@@ -21,6 +21,7 @@ export type FormStepProps = {
 export type FormStep = {
   id: string;
   title: string;
+  keysLabelsDict?: Record<string, string>;
   validationSchema?: (stepData: StepData, allData?: StepData[]) => Promise<unknown>;
   component: React.ComponentType<FormStepProps>;
 };
@@ -30,4 +31,5 @@ export type FormWizardProps = {
   onComplete: (data: Record<string, any>) => void;
   initialData?: StepData[];
   storeKey?: string;
+  allowRevision?: boolean;
 };

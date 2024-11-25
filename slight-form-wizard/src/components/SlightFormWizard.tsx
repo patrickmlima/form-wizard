@@ -7,12 +7,14 @@ import FormFooter from './FormFooter/FormFooter';
 import { useFormStore } from '../hooks/formStore';
 import './SlightFormWizard.css';
 import { SlightFormWizardError } from '../core/interfaces';
+import FormReviewStep from './FormReview/FormReviewStep';
 
 const SlightFormWizard: React.FC<FormWizardProps> = ({
   steps,
   onComplete,
   initialData = [],
   storeKey = 'slight-form-wizard',
+  allowRevision,
 }) => {
   const {
     data: formData,
@@ -31,25 +33,25 @@ const SlightFormWizard: React.FC<FormWizardProps> = ({
 
     if (currentStep.validationSchema) {
       try {
-        await currentStep.validationSchema(
-          currentStepData,
-          formData,
-        );
-        
-        updateStepData(currentStepIndex, { 
-          isComplete: true, 
-          errors: {} 
+        await currentStep.validationSchema(currentStepData, formData);
+
+        updateStepData(currentStepIndex, {
+          isComplete: true,
+          errors: {},
         });
 
         return true;
       } catch (error: any) {
-        let errors: Record<string, string> = { general: error.message };
+        let errorsRecord: Record<string, string> = { general: error.message };
         if (error instanceof SlightFormWizardError) {
-          errors = error.errors.reduce((obj, err) => ({ ...obj, [err.field]: err.message }));
+          errorsRecord = error.errors.reduce(
+            (obj, err) => ({ ...obj, [err.field]: err.message }),
+            {}
+          );
         }
-        updateStepData(currentStepIndex, { 
-          isComplete: false, 
-          errors: {}
+        updateStepData(currentStepIndex, {
+          isComplete: false,
+          errors: errorsRecord,
         });
         return false;
       }
@@ -66,30 +68,22 @@ const SlightFormWizard: React.FC<FormWizardProps> = ({
         ...newData,
       },
       errors: {},
-    }
-    updateStepData(currentStepIndex, updated)
+    };
+    updateStepData(currentStepIndex, updated);
   };
 
   const handleNext = useCallback(async () => {
-    const isValid = await validateCurrentStep();
-    console.log('is valid ', isValid)
-    
+    const isValid = isReviewStep() ? true : await validateCurrentStep();
+
     if (isValid) {
-      if (currentStepIndex < steps.length - 1) {
+      if (currentStepIndex < steps.length - (allowRevision ? 0 : 1)) {
         setCurrentStepIndex(prev => prev + 1);
       } else {
-        // Final submission
         onComplete(formData);
         clearPersistedData();
       }
     }
-  }, [
-    validateCurrentStep, 
-    currentStepIndex, 
-    steps.length, 
-    onComplete, 
-    clearPersistedData
-  ]);
+  }, [validateCurrentStep, currentStepIndex, steps.length, onComplete, clearPersistedData]);
 
   const handleBack = useCallback(() => {
     if (currentStepIndex > 0) {
@@ -103,6 +97,8 @@ const SlightFormWizard: React.FC<FormWizardProps> = ({
     }
   };
 
+  const isReviewStep = () => currentStepIndex === steps.length;
+
   return (
     <FormCard>
       <FormHeader
@@ -110,6 +106,7 @@ const SlightFormWizard: React.FC<FormWizardProps> = ({
         currentStepIndex={currentStepIndex}
         steps={steps}
         setCurrentStepIndex={handleSetIndex}
+        allowRevision={allowRevision}
       />
 
       {StepComponent && (
@@ -136,11 +133,20 @@ const SlightFormWizard: React.FC<FormWizardProps> = ({
         </section>
       )}
 
+      {isReviewStep() && (
+        <FormReviewStep
+          steps={steps}
+          allData={formData}
+          onSetFormStep={handleSetIndex}
+        ></FormReviewStep>
+      )}
+
       <FormFooter
         currentStepIndex={currentStepIndex}
         steps={steps}
         handleBack={handleBack}
         handleNext={handleNext}
+        allowRevision={allowRevision}
       />
     </FormCard>
   );

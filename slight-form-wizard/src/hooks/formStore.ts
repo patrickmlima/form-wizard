@@ -2,33 +2,35 @@ import { useState, useEffect, useCallback } from 'react';
 import { FormStep, StepData } from '../core/types';
 
 export const useFormStore = (key: string, initialData: StepData[], steps: FormStep[]) => {
-
   const initializeStepsData = useCallback(() => {
-    const idsList = initialData?.length > 0 ? initialData?.map(item => item.id) : steps.map(step => step.id);
+    const idsList =
+      initialData?.length > 0 ? initialData?.map(item => item.id) : steps.map(step => step.id);
     try {
       const savedData = localStorage.getItem(key);
       if (savedData) {
         const storedData = JSON.parse(savedData) as StepData[];
-        
+
         return idsList.map(id => {
-          const savedStepData = storedData.find((step) => step.id === id);
-          return savedStepData || {
-            id,
-            data: {},
-            isComplete: false,
-            errors: {}
-          };
+          const savedStepData = storedData.find(step => step.id === id);
+          return (
+            savedStepData || {
+              id,
+              data: {},
+              isComplete: false,
+              errors: {},
+            }
+          );
         });
       }
     } catch (error) {
       console.error('Error loading persisted form data:', error);
     }
 
-    return idsList.map(id => ({
+    return idsList.map<StepData>(id => ({
       id,
       data: {},
       isComplete: false,
-      errors: {}
+      errors: {},
     }));
   }, [key, initialData, steps]);
 
@@ -42,7 +44,6 @@ export const useFormStore = (key: string, initialData: StepData[], steps: FormSt
     }
   });
 
-  // Persist data whenever it changes
   useEffect(() => {
     try {
       localStorage.setItem(key, JSON.stringify(data));
@@ -53,11 +54,9 @@ export const useFormStore = (key: string, initialData: StepData[], steps: FormSt
   }, [data, currentStepIndex, key]);
 
   const updateStepData = useCallback((stepIndex: number, updates: Partial<StepData>) => {
-    setData(current => current.map((step, index) => 
-      index === stepIndex 
-        ? { ...step, ...updates } 
-        : step
-    ));
+    setData(current =>
+      current.map((step, index) => (index === stepIndex ? { ...step, ...updates } : step))
+    );
   }, []);
 
   const clearPersistedData = () => {
@@ -65,13 +64,14 @@ export const useFormStore = (key: string, initialData: StepData[], steps: FormSt
       localStorage.removeItem(key);
       localStorage.removeItem(`${key}_step`);
 
-      const idsList = initialData?.length > 0 ? initialData?.map(item => item.id) : steps.map(step => step.id);
+      const idsList =
+        initialData?.length > 0 ? initialData?.map(item => item.id) : steps.map(step => step.id);
 
       const initializedSteps = idsList.map(id => ({
         id: id,
         data: {},
         isComplete: false,
-        errors: {}
+        errors: {},
       }));
       setData(initializedSteps);
       setCurrentStepIndex(0);

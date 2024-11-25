@@ -7,6 +7,7 @@ export type FormFooterProps = {
   handleBack: () => void;
   handleNext: () => void;
   steps: FormStep[];
+  allowRevision?: boolean;
 };
 
 const FormFooter: React.FC<FormFooterProps> = ({
@@ -14,14 +15,31 @@ const FormFooter: React.FC<FormFooterProps> = ({
   handleBack,
   handleNext,
   steps,
+  allowRevision,
 }) => {
+  const getNextButtonLabel = (): string => {
+    const isLastStep = currentStepIndex === steps.length - 1;
+    const isReviewStep = currentStepIndex === steps.length;
+    if (isLastStep) {
+      if (allowRevision) {
+        return 'Review';
+      }
+      return 'Complete';
+    }
+    if (allowRevision) {
+      if (isReviewStep) {
+        return 'Complete';
+      }
+    }
+    return 'Next';
+  };
   return (
     <section className="form-footer">
       <button className="button secondary" onClick={handleBack} disabled={currentStepIndex === 0}>
         Back
       </button>
       <button className="button primary" onClick={handleNext}>
-        {currentStepIndex === steps.length - 1 ? 'Complete' : 'Next'}
+        {getNextButtonLabel()}
       </button>
     </section>
   );
