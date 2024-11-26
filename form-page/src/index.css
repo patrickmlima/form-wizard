@@ -70,4 +70,5 @@ button:focus-visible {
 
 .form-row {
   margin: 1rem 0rem;
+  width: 100%;
 }

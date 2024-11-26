@@ -8,7 +8,7 @@ const parseZodErrors = (error: ZodError): SlightFormWizardError => {
     const key = err.path[0] as string;
 
     if (key) {
-      return { field: key, message: err.message }
+      return { field: key, message: `${key}: ${err?.message}` }
     }
     return undefined;
   }).filter(item => item !== undefined);
@@ -22,6 +22,7 @@ const validateData = (schema: z.AnyZodObject, stepData: StepData) => {
     return Promise.resolve();
   } catch (err) {
     if (err instanceof ZodError) {
+      console.log(err);
       const newError = parseZodErrors(err);
       return Promise.reject(newError);
     }

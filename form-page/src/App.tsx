@@ -4,6 +4,7 @@ import './App.css'
 import PersonalInfoStep from './components/PersonalInfoStep/PersonalInfoStep';
 import DeliveryPreferenceStep from './components/DeliveryPreferenceStep/DeliveryPreferenceStep';
 import { validatePersonalInfo, validateDeliveryPreference } from './core/validation';
+import { ClientDeliveryService } from './services/ClientDelivery.service';
 
 function App() {
   const steps: FormStep[] = [
@@ -12,21 +13,21 @@ function App() {
   ]
 
   const handleFormSubmit = async (allData: StepData[]) => {
-    const mappedData = allData.reduce((formData, step) => ({
+    const mappedData: Record<string, any> = allData.reduce((formData, step) => ({
       ...formData,
       ...step.data,
     }), {});
 
     try {
-      
-
-      window.alert('Success!');
+      const clientDeliveryService = new ClientDeliveryService();
+      await clientDeliveryService.saveData(mappedData);
+      const msg = `Successfully saved data for client ${mappedData.firstName}`;
+      window.alert(msg);
     } catch (error: any) {
       window.alert(`Error submitting data ${error?.message ?? ''}`)
-      console.error('Error submit')
+      console.error('Error submit ', error);
       throw error;
     }
-    console.log('will submit here')
   }
 
   return (<>
