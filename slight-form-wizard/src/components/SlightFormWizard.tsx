@@ -80,7 +80,7 @@ const SlightFormWizard: React.FC<FormWizardProps> = ({
       if (currentStepIndex < steps.length - (allowRevision ? 0 : 1)) {
         setCurrentStepIndex(prev => prev + 1);
       } else {
-        onComplete(formData);
+        await onComplete(formData);
         clearPersistedData();
       }
     }

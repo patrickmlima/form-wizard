@@ -21,7 +21,7 @@ const App = () => {
   return (
     <SlightFormWizard
       steps={steps}
-      onComplete={() => {
+      onComplete={async () => {
         console.log('should complete here');
       }}
       key="form-wizard"

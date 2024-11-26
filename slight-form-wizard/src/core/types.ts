@@ -28,7 +28,7 @@ export type FormStep = {
 
 export type FormWizardProps = {
   steps: FormStep[];
-  onComplete: (data: Record<string, any>) => void;
+  onComplete: (allData: StepData[], steps?: StepData[]) => Promise<void>;
   initialData?: StepData[];
   storeKey?: string;
   allowRevision?: boolean;
