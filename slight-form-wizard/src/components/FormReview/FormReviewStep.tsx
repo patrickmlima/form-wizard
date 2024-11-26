@@ -16,7 +16,6 @@ const FormReviewStep: React.FC<FormReviewProps> = ({ allData, steps, onSetFormSt
 
   return (
     <section className="form-step">
-      <h1 className="review-title">Review</h1>
       {allData.map(({ data }, index) => {
         const formStep = steps[index];
         return (
@@ -31,13 +30,14 @@ const FormReviewStep: React.FC<FormReviewProps> = ({ allData, steps, onSetFormSt
             </div>
             <div className="section-content">
               {Object.entries(data).map(([prop, value]) => (
-                <div className="field-group" key={`form-section_${index}_${prop}`}>
-                  <p className="field-name">
+                <p className="field-group" key={`form-section_${index}_${prop}`}>
+                  <span className="field-name">
                     {(formStep?.keysLabelsDict && formStep.keysLabelsDict[prop]) ??
                       camelCaseToWords(prop)}
-                  </p>
-                  <p className="field-value">{value}</p>
-                </div>
+                    :{' '}
+                  </span>
+                  {value}
+                </p>
               ))}
             </div>
           </div>

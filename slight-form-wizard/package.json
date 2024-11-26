@@ -3,19 +3,27 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
+  "main": "./dist/slight-form-wizard.cjs.js",
+  "module": "./dist/slight-form-wizard.es.js",
+  "types": "./dist/types/index.d.ts",
+  "files": [
+    "./dist",
+    "README.md",
+    "../LICENSE"
+  ],
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "tsc --project tsconfig.app.json && vite build",
     "lint": "eslint .",
     "preview": "vite preview"
   },
   "dependencies": {
     "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "zod": "^3.23.8"
+    "react-dom": "^18.3.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.13.0",
+    "@types/node": "^22.9.4",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "@vitejs/plugin-react": "^4.3.3",
@@ -26,6 +34,19 @@
     "prettier": "^3.3.3",
     "typescript": "~5.6.2",
     "typescript-eslint": "^8.11.0",
-    "vite": "^5.4.10"
+    "vite": "^5.4.10",
+    "vite-plugin-dts": "^4.3.0",
+    "vite-plugin-lib-inject-css": "^2.1.1"
+  },
+  "peerDependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/slight-form-wizard.es.js",
+      "require": "./dist/slight-form-wizard.cjs.js",
+      "types": "./dist/types/index.d.ts"
+    }
   }
 }

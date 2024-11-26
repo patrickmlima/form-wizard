@@ -1,13 +1,14 @@
 import React, { useCallback } from 'react';
 
+import { SlightFormWizardError } from '../core/interfaces';
 import { FormWizardProps, StepData } from '../core/types';
-import FormHeader from './FormHeader/FormHeader';
+import { useFormStore } from '../hooks/formStore';
 import FormCard from './FormCard/FormCard';
 import FormFooter from './FormFooter/FormFooter';
-import { useFormStore } from '../hooks/formStore';
-import './SlightFormWizard.css';
-import { SlightFormWizardError } from '../core/interfaces';
+import FormHeader from './FormHeader/FormHeader';
 import FormReviewStep from './FormReview/FormReviewStep';
+
+import './SlightFormWizard.css';
 
 const SlightFormWizard: React.FC<FormWizardProps> = ({
   steps,
@@ -102,6 +103,7 @@ const SlightFormWizard: React.FC<FormWizardProps> = ({
   return (
     <FormCard>
       <FormHeader
+        key="form-header-comp"
         currentStep={currentStep}
         currentStepIndex={currentStepIndex}
         steps={steps}
@@ -110,7 +112,7 @@ const SlightFormWizard: React.FC<FormWizardProps> = ({
       />
 
       {StepComponent && (
-        <section>
+        <section key="form-content-section" className="form-content-section">
           {Object.keys(formData[currentStepIndex]?.errors ?? {}).length > 0 && (
             <div className="alert-card">
               <ul className="alert-list">
@@ -135,6 +137,7 @@ const SlightFormWizard: React.FC<FormWizardProps> = ({
 
       {isReviewStep() && (
         <FormReviewStep
+          key="form-review-comp"
           steps={steps}
           allData={formData}
           onSetFormStep={handleSetIndex}
@@ -142,6 +145,7 @@ const SlightFormWizard: React.FC<FormWizardProps> = ({
       )}
 
       <FormFooter
+        key="form-footer-comp"
         currentStepIndex={currentStepIndex}
         steps={steps}
         handleBack={handleBack}

@@ -2,18 +2,19 @@
   margin-top: 0.7rem;
 }
 
-.form-header-title {
+.form-header > .form-header-title {
   font-size: 1.6rem;
   line-height: 2rem;
+  text-align: center;
 }
 
-.form-header-steps {
+.form-header > .form-header-steps {
   display: flex;
   gap: 0.5rem;
   justify-content: center;
 }
 
-.form-step-item {
+.form-header > .form-header-steps > .form-step-item {
   padding: 0.5rem 1rem;
   text-align: center;
   border-radius: 100%;
@@ -21,10 +22,10 @@
   cursor: pointer;
 }
 
-.active-step {
+.form-header > .form-header-steps > .active-step {
   background-color: #3434da;
 }
 
-.inactive-step {
+.form-header > .form-header-steps > .inactive-step {
   background-color: #a4a3a3;
 }
