@@ -1,0 +1,9 @@
+.preferred-time-row {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+textarea {
+  resize: none;
+  width: 100%;
+}

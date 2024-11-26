@@ -1,0 +1,13 @@
+.personal-info-wrapper {
+  display: flex;
+  flex-flow: column;
+  align-items: flex-start;
+}
+
+.personal-info-wrapper > label {
+  width: 100%;
+}
+
+.personal-info-wrapper > input {
+  width: 100%;
+}
