@@ -56,6 +56,33 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+  /api/clients:
+    /api/forms:
+    post:
+      summary: Requests server to store data for a client delivery
+      tags:
+        - Client
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClientDeliverySchema'
+      responses:
+        '200':
+          description: Successfully stored client data
+        '400':
+          description: Error on provided data
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal error creating translation request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
 components:
   schemas:
@@ -64,3 +91,30 @@ components:
       properties:
         message:
           type: string
+    ClientDeliverySchema:
+      type: object
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+          format: email
+        deliveryAddress:
+          type: string
+        preferredTime:
+          type: string
+          enum:
+            - morning
+            - afternoon
+            - evening
+        specialInstructions:
+          type: string
+      required:
+        - firstName
+        - lastName
+        - email
+        - deliveryAddress
+        - preferredTime
+          

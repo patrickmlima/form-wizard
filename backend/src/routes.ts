@@ -2,7 +2,7 @@ import { Router, Request, Response } from 'express';
 import swaggerUi from 'swagger-ui-express';
 
 import { readSwaggerFile } from './utils/swagger.util';
-import { createFormRegistryController, listFormRegistriesController } from './controllers';
+import { createClientDeliveryController, createFormRegistryController, listFormRegistriesController } from './controllers';
 
 const router = Router();
 
@@ -15,5 +15,7 @@ readSwaggerFile().then((docs) => {
 router.post('/forms', createFormRegistryController);
 
 router.get('/forms', listFormRegistriesController);
+
+router.post('/clients', createClientDeliveryController);
 
 export default router;
