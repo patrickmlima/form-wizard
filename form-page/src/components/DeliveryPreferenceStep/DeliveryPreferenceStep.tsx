@@ -2,14 +2,9 @@ import React from 'react';
 import { FormStepProps } from 'slight-form-wizard';
 
 import './DeliveryPreferenceStep.css';
+import { DeliveryPreferredTime } from '../../core/enums';
 
 const DeliveryPreferenceStep: React.FC<FormStepProps> = ({ stepData, onUpdateStepData }) => {
-  enum DeliveryPreferredTime {
-    MORNING = 'morning',
-    AFTERNOON = 'afternoon',
-    EVENING = 'evening',
-  }
-
   const handleChange = (key: string, value: any) => {
     onUpdateStepData({ [key]: value })
   }
