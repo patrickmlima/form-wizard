@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 
 const env = process.env['NODE_ENV'];
 const envFilePath = path.join(process.cwd(), 'environments', `.env.${env}`);
+
 dotenv.config({ path: envFilePath });
 
 export const appConfig = {

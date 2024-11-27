@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: ./form-page/Dockerfile
+    ports:
+      - "3200:80"
+    env_file:
+      - ./form-page/.env
+  backend:
+    build:
+      context: ./backend
+      dockerfile: ./Dockerfile
+    ports:
+      - "3000:3000"
+    depends_on:
+      - mongodb
+      - frontend
+    environment:
+      - NODE_ENV=production
+  mongodb:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - fw_mongodb_data:/data/db
+
+volumes:
+  fw_mongodb_data:
